@@ -103,9 +103,42 @@ public class Main {
                 // 입금
 
 
-            } else{
+            } else if(select.equals(7)){
+                // 출금
+
+
+            } else if(select.equals(8)){
+                // 이체
+
+
+            } else if(select.equals(9)){
+                // 계좌정지
+                try{
+                    System.out.print("\n");
+                    System.out.print("회원 ID를 입력해주세요 : ");
+                    Long id = Long.parseLong(scanner.nextLine());
+                    memberService.findMember(id);
+                    System.out.print("정지시킬 계좌번호를 입력해주세요 : ");
+                    String accountNumber = scanner.nextLine();
+                    accountService.suspendAccount(accountNumber);
+                    System.out.println("계좌상태 : "+ accountService.findAccountbyAccountNumber(accountNumber).getStatus());
+
+                } catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
+
+            } else if(select.equals(10)){
+                // 계좌활성화
+
+
+            } else if(select.equals(11)){
+                // 계좌해지
+
+
+            }else{
                 System.out.println("보기에 제시된 숫자만 입력해주세요.");
             }
+
         } while(true);
 
 

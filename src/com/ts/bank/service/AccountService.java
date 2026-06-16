@@ -32,8 +32,24 @@ public class AccountService {
         }
         return accountRepository.findbyMemberId(memberId);
     }
-    public void deleteAccount(){
+    public Account findAccountbyAccountNumber(String accountNumber) throws IllegalArgumentException{
+        if(accountRepository.findbyAccountNumber(accountNumber) == null){
+            throw new IllegalArgumentException("존재하지 않는 계좌입니다");
+        }
+        return accountRepository.findbyAccountNumber(accountNumber);
+    }
 
+    public void activateAccount(String accountNumber){
+        Account account = accountRepository.findbyAccountNumber(accountNumber);
+        account.activate();
+    }
+    public void suspendAccount(String accountNumber){
+        Account account = accountRepository.findbyAccountNumber(accountNumber);
+        account.suspend();
+    }
+    public void closeAccount(String accountNumber){
+        Account account = accountRepository.findbyAccountNumber(accountNumber);
+        account.close();
     }
 
 

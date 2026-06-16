@@ -25,6 +25,14 @@ public class AccountRepository {
         }
         return accounts;
     }
+    public Account findbyAccountNumber(String accountNumber){
+        for (Account account : accountRepository.values()) {
+            if (accountNumber.equals(account.getAccountNumber())) {
+                return account;
+            }
+        }
+        return null;
+    }
     public void deletebyId(Long id){
         accountRepository.remove(id);
     }
