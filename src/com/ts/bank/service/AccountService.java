@@ -15,7 +15,10 @@ public class AccountService {
         this.memberRepository = memberRepository;
     }
 
-    public Account createAccount(Long memberId){
+    public Account createAccount(Long memberId) throws IllegalArgumentException{
+        if(memberRepository.findbyId(memberId) == null){
+            throw new IllegalArgumentException("존재하지 않는 회원입니다");
+        }
         Account account = new Account(++sequence, "100"+sequence, memberId);
         accountRepository.save(account);
         return account;
@@ -23,8 +26,14 @@ public class AccountService {
     public Account findAccountbyId(Long id){
         return accountRepository.findbyId(id);
     }
-    public Account findAccountbyMemberId(Long memberId){
+    public Account[] findAccountbyMemberId(Long memberId) throws IllegalArgumentException{
+        if(memberRepository.findbyId(memberId) == null){
+            throw new IllegalArgumentException("존재하지 않는 회원입니다");
+        }
         return accountRepository.findbyMemberId(memberId);
+    }
+    public void deleteAccount(){
+
     }
 
 

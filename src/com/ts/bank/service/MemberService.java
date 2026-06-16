@@ -17,10 +17,16 @@ public class MemberService {
     public void join(Member member){
         memberRepository.save(member);
     }
-    public Member findMember(Long id){
+    public Member findMember(Long id) throws  IllegalArgumentException{
+        if(memberRepository.findbyId(id) == null){
+            throw new IllegalArgumentException("회원정보가 없습니다");
+        }
         return memberRepository.findbyId(id);
     }
-    public void deleteMember(Long id){
+    public void deleteMember(Long id) throws IllegalArgumentException{
+        if(memberRepository.findbyId(id)==null){
+            throw new IllegalArgumentException("존재하지 않는 회원입니다");
+        }
         memberRepository.deletebyId(id);
     }
 

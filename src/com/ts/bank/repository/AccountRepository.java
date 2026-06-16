@@ -15,13 +15,15 @@ public class AccountRepository {
     public Account findbyId(Long id){
         return accountRepository.get(id);
     }
-    public Account findbyMemberId(Long memberId){
+    public Account[] findbyMemberId(Long memberId){
+        Account[] accounts = new Account[100];
+        int i = 0;
         for (Account account : accountRepository.values()) {
             if (memberId.equals(account.getMemberId())) {
-                return account;
+                 accounts[i++] = account;
             }
         }
-        return null;
+        return accounts;
     }
     public void deletebyId(Long id){
         accountRepository.remove(id);

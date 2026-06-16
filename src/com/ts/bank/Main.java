@@ -21,7 +21,8 @@ public class Main {
 
         do{
             System.out.print("\n");
-            System.out.println("1.회원가입  2.계좌생성  3.회원조회  4.계좌조회  5.회원탈퇴  6.계좌삭제");
+            System.out.println("1.회원가입  2.계좌생성  3.회원조회  4.계좌조회    5.회원탈퇴");
+            System.out.println("6.입금     7.출금     8.이체     9.계좌정지   10.계좌활성화  11.계좌해지");
             System.out.print("필요한 서비스 번호를 입력해주세요 : ");
             Integer select = Integer.parseInt(scanner.nextLine());
 
@@ -40,31 +41,68 @@ public class Main {
 
             } else if(select.equals(2)){
                 // 계좌생성
-                System.out.print("\n");
-                System.out.print("회원 ID를 입력해주세요 : ");
-                Long id = Long.parseLong(scanner.nextLine());
-                accountService.createAccount(id);
+                try{
+
+                    System.out.print("\n");
+                    System.out.print("회원 ID를 입력해주세요 : ");
+                    Long id = Long.parseLong(scanner.nextLine());
+                    accountService.createAccount(id);
+
+                }catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
 
             } else if(select.equals(3)){
                 // 회원조회
-                System.out.print("\n");
-                System.out.print("회원 ID를 입력해주세요 : ");
-                Long id = Long.parseLong(scanner.nextLine());
-                Member member = memberRepo.findbyId(id);
-                System.out.println("ID : "+member.getId()+"/ 회원명 : "+member.getName()+"/ 전화번호 : "+member.getPhoneNumber());
+                try{
+
+                    System.out.print("\n");
+                    System.out.print("회원 ID를 입력해주세요 : ");
+                    Long id = Long.parseLong(scanner.nextLine());
+                    Member member = memberService.findMember(id);
+                    System.out.println("ID : "+member.getId()+"/ 회원명 : "+member.getName()+"/ 전화번호 : "+member.getPhoneNumber());
+
+                } catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
 
             } else if(select.equals(4)){
                 // 계좌조회
                 System.out.print("\n");
-                System.out.print("회원 ID를 입력해주세요 : ");
-                Long id = Long.parseLong(scanner.nextLine());
-                Account account = accountService.findAccountbyMemberId(id);
-                System.out.println("계좌번호 : "+account.getAccountNumber()+"/ 예금주 : "+memberService.findMember(id).getName());
+                try{
+
+                    System.out.print("회원 ID를 입력해주세요 : ");
+                    Long id = Long.parseLong(scanner.nextLine());
+                    Account[] accounts = accountService.findAccountbyMemberId(id);
+                    System.out.print("계좌번호 : ");
+                    for(Account account : accounts){
+                        if(account == null) break;
+                        System.out.print(account.getAccountNumber()+", ");
+                    }
+                    System.out.println("/ 예금주 : "+memberService.findMember(id).getName());
+
+                } catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
+
 
             } else if(select.equals(5)){
                 // 회원탈퇴
+                try{
+                    System.out.print("\n");
+                    System.out.print("회원 ID를 입력해주세요 : ");
+                    Long id = Long.parseLong(scanner.nextLine());
+                    memberService.deleteMember(id);
+                    System.out.println("회원 탈퇴처리 완료되었습니다");
+                } catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
+
+
             } else if(select.equals(6)){
-                // 계좌삭제
+                // 입금
+
+
             } else{
                 System.out.println("보기에 제시된 숫자만 입력해주세요.");
             }
