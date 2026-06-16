@@ -59,7 +59,7 @@ public class Main {
                 System.out.print("회원 ID를 입력해주세요 : ");
                 Long id = Long.parseLong(scanner.nextLine());
                 Account account = accountService.findAccountbyMemberId(id);
-                System.out.println("");
+                System.out.println("계좌번호 : "+account.getAccountNumber()+"/ 예금주 : "+memberService.findMember(id).getName());
 
             } else if(select.equals(5)){
                 // 회원탈퇴
