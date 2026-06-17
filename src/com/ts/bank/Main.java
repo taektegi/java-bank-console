@@ -1,7 +1,7 @@
 package com.ts.bank;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Scanner;
 
 import com.ts.bank.domain.Account;
@@ -81,10 +81,9 @@ public class Main {
 
                     System.out.print("회원 ID를 입력해주세요 : ");
                     Long id = Long.parseLong(scanner.nextLine());
-                    Account[] accounts = accountService.findAccountbyMemberId(id);
+                    List<Account> accounts = accountService.findAccountbyMemberId(id);
                     System.out.print("계좌번호 : ");
                     for(Account account : accounts){
-                        if(account == null) break;
                         System.out.print(account.getAccountNumber()+", ");
                     }
                     System.out.println("/ 예금주 : "+memberService.findMember(id).getName());
@@ -217,33 +216,11 @@ public class Main {
                     System.out.print("\n");
                     System.out.print("계좌번호를 입력해주세요 : ");
                     String accountNumber = scanner.nextLine();
-                    Transaction[] transactions = transactionService.findbyAccountNumber(accountNumber);
+                    List<Transaction> transactions = transactionService.findbyAccountNumber(accountNumber);
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 hh시 mm분");
 
                     for(Transaction transaction : transactions){
-                        if(transaction == null){
-                            break;
-                        }
-                        if(transaction.getType().equals(TransactionType.DEPOSIT)){
-                            System.out.println(transaction.getCreatedAt().format(formatter)+"/ 예금주 : "
-                                    +accountService.findMemberbyAccountNumber(transaction.getAccountNumber()).getName()+"/ 계좌번호 : "
-                                    +transaction.getAccountNumber()+"/ "+transaction.getAmount()+"원 입금");
-                        } else if (transaction.getType().equals(TransactionType.WITHDRAW)) {
-                            System.out.println(transaction.getCreatedAt().format(formatter)+"/ 예금주 : "
-                                    +accountService.findMemberbyAccountNumber(transaction.getAccountNumber()).getName()+"/ 계좌번호 : "
-                                    +transaction.getAccountNumber()+"/ "+transaction.getAmount()+"원 출금");
-                        } else if (transaction.getType().equals(TransactionType.TRANSFER_OUT)) {
-                            System.out.println(transaction.getCreatedAt().format(formatter)+"/ 예금주 : "
-                                    +accountService.findMemberbyAccountNumber(transaction.getAccountNumber()).getName()+"/ 계좌번호 : "
-                                    +transaction.getAccountNumber()+"/ 상대 계좌번호 : "
-                                    +transaction.getTargetAccountNumber()+"/ "+transaction.getAmount()+"원 OUT");
-                        } else if (transaction.getType().equals(TransactionType.TRANSFER_IN)) {
-                            System.out.println(transaction.getCreatedAt().format(formatter)+"/ 예금주 : "
-                                    +accountService.findMemberbyAccountNumber(transaction.getAccountNumber()).getName()+"/ 계좌번호 : "
-                                    +transaction.getAccountNumber()+"/ 상대 계좌번호 : "
-                                    +transaction.getTargetAccountNumber()+"/ "+transaction.getAmount()+"원 IN");
-                        }
-
+                        printTransaction(transaction,accountService,formatter);
                     }
 
                 } catch (Exception e) {
@@ -257,5 +234,21 @@ public class Main {
         } while(true);
 
 
+    }
+
+    private static void printTransaction(Transaction transaction, AccountService accountService, DateTimeFormatter formatter){
+
+        String name = accountService.findMemberbyAccountNumber(transaction.getAccountNumber()).getName();
+        System.out.print(transaction.getCreatedAt().format(formatter)+"/ 예금주 : " +name+"/ 계좌번호 : "+transaction.getAccountNumber()+"/ ");
+
+        if(transaction.getType().equals(TransactionType.DEPOSIT)){
+            System.out.println(transaction.getAmount()+"원 입금");
+        } else if (transaction.getType().equals(TransactionType.WITHDRAW)) {
+            System.out.println(transaction.getAmount()+"원 출금");
+        } else if (transaction.getType().equals(TransactionType.TRANSFER_OUT)) {
+            System.out.println("상대 계좌번호 : " + transaction.getTargetAccountNumber()+ "/ " + transaction.getAmount()+"원 OUT");
+        } else if (transaction.getType().equals(TransactionType.TRANSFER_IN)) {
+            System.out.println("상대 계좌번호 : " + transaction.getTargetAccountNumber()+ "/ " + transaction.getAmount()+"원 IN");
+        }
     }
 }

@@ -2,13 +2,12 @@ package com.ts.bank.repository;
 
 import com.ts.bank.domain.Account;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 public interface AccountRepository {
     public void save(Account account);
     public Account findbyId(Long id);
-    public Account[] findbyMemberId(Long memberId);
+    public List<Account> findbyMemberId(Long memberId);
     public Account findbyAccountNumber(String accountNumber);
     public void deletebyId(Long id);
 }

@@ -4,6 +4,8 @@ import com.ts.bank.repository.MemoryTransactionRepository;
 import com.ts.bank.repository.TransactionRepository;
 import com.ts.bank.domain.Transaction;
 
+import java.util.List;
+
 public class TransactionService {
     private final TransactionRepository transactionRepository;
 
@@ -11,7 +13,7 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public Transaction[] findbyAccountNumber(String accountNumber){
+    public List<Transaction> findbyAccountNumber(String accountNumber){
         return transactionRepository.findbyAccountNumber(accountNumber);
     }
 }

@@ -4,6 +4,7 @@ import com.ts.bank.domain.*;
 import com.ts.bank.repository.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class AccountService {
     private final AccountRepository accountRepository;
@@ -26,7 +27,7 @@ public class AccountService {
     public Account findAccountbyId(Long id){
         return accountRepository.findbyId(id);
     }
-    public Account[] findAccountbyMemberId(Long memberId) {
+    public List<Account> findAccountbyMemberId(Long memberId) {
         validateMember(memberId);
         return accountRepository.findbyMemberId(memberId);
     }
@@ -77,8 +78,13 @@ public class AccountService {
     public Long transfer(String myAccount, String targetAccount, Long cash){
         validateAccount(myAccount);
         validateAccount(targetAccount);
-        Long balance = accountRepository.findbyAccountNumber(myAccount).withdraw(cash);
-        accountRepository.findbyAccountNumber(targetAccount).deposit(cash);
+        Account account1 = accountRepository.findbyAccountNumber(myAccount);
+        Account account2 = accountRepository.findbyAccountNumber(targetAccount);
+        account1.validateActive();
+        account2.validateActive();
+
+        Long balance = account1.withdraw(cash);
+        account2.deposit(cash);
 
         LocalDateTime createdAt = LocalDateTime.now();
         Long id1 = transactionRepository.nextId();

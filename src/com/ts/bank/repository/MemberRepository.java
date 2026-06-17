@@ -2,8 +2,6 @@ package com.ts.bank.repository;
 
 import com.ts.bank.domain.Member;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public interface MemberRepository {
     public void save(Member member);

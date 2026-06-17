@@ -2,6 +2,8 @@ package com.ts.bank.repository;
 
 import com.ts.bank.domain.Account;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -14,12 +16,12 @@ public class MemoryAccountRepository implements AccountRepository{
     public Account findbyId(Long id){
         return accountRepository.get(id);
     }
-    public Account[] findbyMemberId(Long memberId){
-        Account[] accounts = new Account[100];
-        int i = 0;
+    public List<Account> findbyMemberId(Long memberId){
+        List<Account> accounts = new ArrayList<>();
+
         for (Account account : accountRepository.values()) {
             if (memberId.equals(account.getMemberId())) {
-                 accounts[i++] = account;
+                 accounts.add(account);
             }
         }
         return accounts;

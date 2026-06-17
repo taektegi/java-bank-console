@@ -29,13 +29,23 @@ public class Account {
     }
 
     public void activate(){
+        if(this.status.equals(AccountStatus.CLOSED)){
+            throw new IllegalStateException("해지된 계좌입니다");
+        }
         this.status = AccountStatus.ACTIVE;
     }
     public void suspend(){
+        if(this.status.equals(AccountStatus.CLOSED)){
+            throw new IllegalStateException("해지된 계좌입니다");
+        }
         this.status = AccountStatus.SUSPENDED;
     }
     public void close(){
+        if(balance > 0){
+            throw new IllegalStateException("계좌에 잔액이 존재합니다 잔액을 비우고 해지를 시도해주세요");
+        }
         this.status = AccountStatus.CLOSED;
+
     }
 
     public Long deposit(Long cash){
@@ -46,8 +56,8 @@ public class Account {
     }
     public Long withdraw(Long cash){
         validateActive();
-        validateEnoughBalance(cash);
         validatePositiveCash(cash);
+        validateEnoughBalance(cash);
         this.balance -= cash;
         return this.balance;
     }
@@ -57,12 +67,12 @@ public class Account {
             throw new IllegalStateException("계좌가 활성화상태가 아닙니다");
         }
     }
-    public void validateEnoughBalance(Long cash) {
+    private void validateEnoughBalance(Long cash) {
         if(this.balance < cash) {
             throw new IllegalArgumentException("잔액이 부족합니다");
         }
     }
-    public void validatePositiveCash(Long cash){
+    private void validatePositiveCash(Long cash){
         if(cash <= 0L){
             throw new IllegalArgumentException("금액은 0보다 커야합니다");
         }
