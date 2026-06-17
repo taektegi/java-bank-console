@@ -46,7 +46,8 @@ public class Main {
                     System.out.print("\n");
                     System.out.print("회원 ID를 입력해주세요 : ");
                     Long id = Long.parseLong(scanner.nextLine());
-                    accountService.createAccount(id);
+                    Account account = accountService.createAccount(id);
+                    System.out.println("계좌가 생성되었습니다/ 계좌번호 : "+ account.getAccountNumber());
 
                 }catch(Exception e){
                     System.out.println(e.getMessage());
@@ -103,15 +104,53 @@ public class Main {
 
             } else if(select.equals(6)){
                 // 입금
+                try{
 
+                    System.out.print("\n");
+                    System.out.print("계좌번호를 입력해주세요 : ");
+                    String accountNumber = scanner.nextLine();
+                    System.out.print("입금하실 금액을 입력해주세요 : ");
+                    Long cash = Long.parseLong(scanner.nextLine());
+                    Long balance = accountService.depositAccount(accountNumber,cash);
+                    System.out.println(cash+"원 입금완료되었습니다/ 계좌잔액 : "+balance+"원");
+
+                } catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
 
             } else if(select.equals(7)){
                 // 출금
+                try{
 
+                    System.out.print("\n");
+                    System.out.print("계좌번호를 입력해주세요 : ");
+                    String accountNumber = scanner.nextLine();
+                    System.out.print("출금하실 금액을 입력해주세요 : ");
+                    Long cash = Long.parseLong(scanner.nextLine());
+                    Long balance = accountService.withdrawAccount(accountNumber,cash);
+                    System.out.println(cash+"원 출금완료되었습니다/ 계좌잔액 : "+balance+"원");
+
+                } catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
 
             } else if(select.equals(8)){
                 // 이체
+                try{
 
+                    System.out.print("\n");
+                    System.out.print("계좌번호를 입력해주세요 : ");
+                    String myAccount = scanner.nextLine();
+                    System.out.print("이체할 계좌번호를 입력해주세요 : ");
+                    String otherAccount = scanner.nextLine();
+                    System.out.print("이체하실 금액을 입력해주세요 : ");
+                    Long cash = Long.parseLong(scanner.nextLine());
+                    Long balance = accountService.transfer(myAccount,otherAccount,cash);
+                    System.out.println(cash+"원 이체완료되었습니다/ 계좌잔액 : "+balance+"원");
+
+                } catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
 
             } else if(select.equals(9)){
                 // 계좌정지

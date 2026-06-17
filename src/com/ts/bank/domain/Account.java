@@ -38,11 +38,35 @@ public class Account {
         this.status = AccountStatus.CLOSED;
     }
 
-    public void addBalance(Long cash){
-        balance+=cash;
+    public Long deposit(Long cash){
+        validateActive();
+        validatePositiveCash(cash);
+        this.balance += cash;
+        return this.balance;
     }
-    public void subBalance(Long cash){
-        balance-=cash;
+    public Long withdraw(Long cash){
+        validateActive();
+        validateEnoughBalance(cash);
+        validatePositiveCash(cash);
+        this.balance -= cash;
+        return this.balance;
     }
+
+    public void validateActive() {
+        if(this.status != AccountStatus.ACTIVE){
+            throw new IllegalStateException("계좌가 활성화상태가 아닙니다");
+        }
+    }
+    public void validateEnoughBalance(Long cash) {
+        if(this.balance < cash) {
+            throw new IllegalArgumentException("잔액이 부족합니다");
+        }
+    }
+    public void validatePositiveCash(Long cash){
+        if(cash <= 0L){
+            throw new IllegalArgumentException("금액은 0보다 커야합니다");
+        }
+    }
+
 
 }
