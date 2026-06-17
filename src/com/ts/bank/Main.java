@@ -4,8 +4,8 @@ import java.util.Scanner;
 
 import com.ts.bank.domain.Account;
 import com.ts.bank.domain.Member;
-import com.ts.bank.repository.AccountRepository;
-import com.ts.bank.repository.MemberRepository;
+import com.ts.bank.repository.MemoryAccountRepository;
+import com.ts.bank.repository.MemoryMemberRepository;
 import com.ts.bank.service.AccountService;
 import com.ts.bank.service.MemberService;
 
@@ -13,9 +13,9 @@ import com.ts.bank.service.MemberService;
 public class Main {
     static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        MemberRepository memberRepo = new MemberRepository();
+        MemoryMemberRepository memberRepo = new MemoryMemberRepository();
         MemberService memberService = new MemberService(memberRepo);
-        AccountRepository accountRepo = new AccountRepository();
+        MemoryAccountRepository accountRepo = new MemoryAccountRepository();
         AccountService accountService = new AccountService(accountRepo, memberRepo);
 
 
@@ -89,11 +89,13 @@ public class Main {
             } else if(select.equals(5)){
                 // 회원탈퇴
                 try{
+
                     System.out.print("\n");
                     System.out.print("회원 ID를 입력해주세요 : ");
                     Long id = Long.parseLong(scanner.nextLine());
                     memberService.deleteMember(id);
                     System.out.println("회원 탈퇴처리 완료되었습니다");
+
                 } catch(Exception e){
                     System.out.println(e.getMessage());
                 }
@@ -114,6 +116,7 @@ public class Main {
             } else if(select.equals(9)){
                 // 계좌정지
                 try{
+
                     System.out.print("\n");
                     System.out.print("회원 ID를 입력해주세요 : ");
                     Long id = Long.parseLong(scanner.nextLine());
@@ -129,11 +132,37 @@ public class Main {
 
             } else if(select.equals(10)){
                 // 계좌활성화
+                try{
 
+                    System.out.print("\n");
+                    System.out.print("회원 ID를 입력해주세요 : ");
+                    Long id = Long.parseLong(scanner.nextLine());
+                    memberService.findMember(id);
+                    System.out.print("활성화시킬 계좌번호를 입력해주세요 : ");
+                    String accountNumber = scanner.nextLine();
+                    accountService.activateAccount(accountNumber);
+                    System.out.println("계좌상태 : "+ accountService.findAccountbyAccountNumber(accountNumber).getStatus());
+
+                } catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
 
             } else if(select.equals(11)){
                 // 계좌해지
+                try{
 
+                    System.out.print("\n");
+                    System.out.print("회원 ID를 입력해주세요 : ");
+                    Long id = Long.parseLong(scanner.nextLine());
+                    memberService.findMember(id);
+                    System.out.print("정지시킬 계좌번호를 입력해주세요 : ");
+                    String accountNumber = scanner.nextLine();
+                    accountService.closeAccount(accountNumber);
+                    System.out.println("계좌상태 : "+ accountService.findAccountbyAccountNumber(accountNumber).getStatus());
+
+                } catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
 
             }else{
                 System.out.println("보기에 제시된 숫자만 입력해주세요.");

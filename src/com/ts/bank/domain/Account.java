@@ -24,7 +24,6 @@ public class Account {
     public Long getMemberId(){
         return memberId;
     }
-
     public AccountStatus getStatus() {
         return status;
     }
@@ -38,4 +37,12 @@ public class Account {
     public void close(){
         this.status = AccountStatus.CLOSED;
     }
+
+    public void addBalance(Long cash){
+        balance+=cash;
+    }
+    public void subBalance(Long cash){
+        balance-=cash;
+    }
+
 }

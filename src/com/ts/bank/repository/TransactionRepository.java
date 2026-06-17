@@ -1,4 +1,4 @@
 package com.ts.bank.repository;
 
-public class TransactionRepository {
+public interface TransactionRepository {
 }
