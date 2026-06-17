@@ -2,13 +2,14 @@ package com.ts.bank.service;
 
 
 import com.ts.bank.domain.Member;
+import com.ts.bank.repository.MemberRepository;
 import com.ts.bank.repository.MemoryMemberRepository;
 
 
 public class MemberService {
-    private final MemoryMemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
-    public MemberService(MemoryMemberRepository memberRepository){
+    public MemberService(MemberRepository memberRepository){
         this.memberRepository = memberRepository;
     }
 

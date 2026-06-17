@@ -1,28 +1,35 @@
 package com.ts.bank;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 import com.ts.bank.domain.Account;
 import com.ts.bank.domain.Member;
-import com.ts.bank.repository.MemoryAccountRepository;
-import com.ts.bank.repository.MemoryMemberRepository;
+import com.ts.bank.domain.Transaction;
+import com.ts.bank.domain.TransactionType;
+import com.ts.bank.repository.*;
 import com.ts.bank.service.AccountService;
 import com.ts.bank.service.MemberService;
+import com.ts.bank.service.TransactionService;
 
 
 public class Main {
     static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        MemoryMemberRepository memberRepo = new MemoryMemberRepository();
+        MemberRepository memberRepo = new MemoryMemberRepository();
         MemberService memberService = new MemberService(memberRepo);
-        MemoryAccountRepository accountRepo = new MemoryAccountRepository();
-        AccountService accountService = new AccountService(accountRepo, memberRepo);
+        TransactionRepository transactionRepo = new MemoryTransactionRepository();
+        TransactionService transactionService = new TransactionService(transactionRepo);
+        AccountRepository accountRepo = new MemoryAccountRepository();
+        AccountService accountService = new AccountService(accountRepo, memberRepo, transactionRepo);
 
 
         do{
             System.out.print("\n");
-            System.out.println("1.회원가입  2.계좌생성  3.회원조회  4.계좌조회    5.회원탈퇴");
-            System.out.println("6.입금     7.출금     8.이체     9.계좌정지   10.계좌활성화  11.계좌해지");
+            System.out.println("1.회원가입  2.계좌생성  3.회원조회  4.계좌조회    5.회원탈퇴 ");
+            System.out.println("6.입금     7.출금     8.이체     9.계좌정지   10.계좌활성화");
+            System.out.println("11.계좌해지 12.거래내역조회");
             System.out.print("필요한 서비스 번호를 입력해주세요 : ");
             Integer select = Integer.parseInt(scanner.nextLine());
 
@@ -142,10 +149,10 @@ public class Main {
                     System.out.print("계좌번호를 입력해주세요 : ");
                     String myAccount = scanner.nextLine();
                     System.out.print("이체할 계좌번호를 입력해주세요 : ");
-                    String otherAccount = scanner.nextLine();
+                    String targetAccount = scanner.nextLine();
                     System.out.print("이체하실 금액을 입력해주세요 : ");
                     Long cash = Long.parseLong(scanner.nextLine());
-                    Long balance = accountService.transfer(myAccount,otherAccount,cash);
+                    Long balance = accountService.transfer(myAccount,targetAccount,cash);
                     System.out.println(cash+"원 이체완료되었습니다/ 계좌잔액 : "+balance+"원");
 
                 } catch(Exception e){
@@ -200,6 +207,46 @@ public class Main {
                     System.out.println("계좌상태 : "+ accountService.findAccountbyAccountNumber(accountNumber).getStatus());
 
                 } catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
+
+            }else if(select.equals(12)) {
+                // 거래내역조회
+                try {
+
+                    System.out.print("\n");
+                    System.out.print("계좌번호를 입력해주세요 : ");
+                    String accountNumber = scanner.nextLine();
+                    Transaction[] transactions = transactionService.findbyAccountNumber(accountNumber);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 hh시 mm분");
+
+                    for(Transaction transaction : transactions){
+                        if(transaction == null){
+                            break;
+                        }
+                        if(transaction.getType().equals(TransactionType.DEPOSIT)){
+                            System.out.println(transaction.getCreatedAt().format(formatter)+"/ 예금주 : "
+                                    +accountService.findMemberbyAccountNumber(transaction.getAccountNumber()).getName()+"/ 계좌번호 : "
+                                    +transaction.getAccountNumber()+"/ "+transaction.getAmount()+"원 입금");
+                        } else if (transaction.getType().equals(TransactionType.WITHDRAW)) {
+                            System.out.println(transaction.getCreatedAt().format(formatter)+"/ 예금주 : "
+                                    +accountService.findMemberbyAccountNumber(transaction.getAccountNumber()).getName()+"/ 계좌번호 : "
+                                    +transaction.getAccountNumber()+"/ "+transaction.getAmount()+"원 출금");
+                        } else if (transaction.getType().equals(TransactionType.TRANSFER_OUT)) {
+                            System.out.println(transaction.getCreatedAt().format(formatter)+"/ 예금주 : "
+                                    +accountService.findMemberbyAccountNumber(transaction.getAccountNumber()).getName()+"/ 계좌번호 : "
+                                    +transaction.getAccountNumber()+"/ 상대 계좌번호 : "
+                                    +transaction.getTargetAccountNumber()+"/ "+transaction.getAmount()+"원 OUT");
+                        } else if (transaction.getType().equals(TransactionType.TRANSFER_IN)) {
+                            System.out.println(transaction.getCreatedAt().format(formatter)+"/ 예금주 : "
+                                    +accountService.findMemberbyAccountNumber(transaction.getAccountNumber()).getName()+"/ 계좌번호 : "
+                                    +transaction.getAccountNumber()+"/ 상대 계좌번호 : "
+                                    +transaction.getTargetAccountNumber()+"/ "+transaction.getAmount()+"원 IN");
+                        }
+
+                    }
+
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
 

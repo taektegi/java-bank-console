@@ -1,18 +1,20 @@
 package com.ts.bank.service;
 
-import com.ts.bank.domain.Account;
-import com.ts.bank.domain.AccountStatus;
-import com.ts.bank.repository.MemoryMemberRepository;
-import com.ts.bank.repository.MemoryAccountRepository;
+import com.ts.bank.domain.*;
+import com.ts.bank.repository.*;
+
+import java.time.LocalDateTime;
 
 public class AccountService {
-    private final MemoryAccountRepository accountRepository;
-    private final MemoryMemberRepository memberRepository;
+    private final AccountRepository accountRepository;
+    private final MemberRepository memberRepository;
+    private final TransactionRepository transactionRepository;
     private Long sequence = 0L;
 
-    public AccountService(MemoryAccountRepository accountRepository, MemoryMemberRepository memberRepository){
+    public AccountService(AccountRepository accountRepository, MemberRepository memberRepository, TransactionRepository transactionRepository){
         this.accountRepository = accountRepository;
         this.memberRepository = memberRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     public Account createAccount(Long memberId) {
@@ -31,6 +33,9 @@ public class AccountService {
     public Account findAccountbyAccountNumber(String accountNumber) {
         validateAccount(accountNumber);
         return accountRepository.findbyAccountNumber(accountNumber);
+    }
+    public Member findMemberbyAccountNumber(String accountNumber){
+        return memberRepository.findbyId(findAccountbyAccountNumber(accountNumber).getMemberId());
     }
 
     // 계좌 활성화, 정지, 해지
@@ -53,17 +58,36 @@ public class AccountService {
     // 입금, 출금, 이체
     public Long depositAccount(String accountNumber, Long cash){
         validateAccount(accountNumber);
-        return accountRepository.findbyAccountNumber(accountNumber).deposit(cash);
+        Long balance = accountRepository.findbyAccountNumber(accountNumber).deposit(cash);
+        LocalDateTime createdAt = LocalDateTime.now();
+        Long id = transactionRepository.nextId();
+        Transaction transaction = new Transaction(id,accountNumber,null,createdAt,cash, TransactionType.DEPOSIT);
+        transactionRepository.save(transaction);
+        return balance;
     }
     public Long withdrawAccount(String accountNumber, Long cash){
         validateAccount(accountNumber);
-        return accountRepository.findbyAccountNumber(accountNumber).withdraw(cash);
+        Long balance = accountRepository.findbyAccountNumber(accountNumber).withdraw(cash);
+        LocalDateTime createdAt = LocalDateTime.now();
+        Long id = transactionRepository.nextId();
+        Transaction transaction = new Transaction(id,accountNumber,null,createdAt,cash, TransactionType.WITHDRAW);
+        transactionRepository.save(transaction);
+        return balance;
     }
-    public Long transfer(String myAccount, String otherAccount, Long cash){
+    public Long transfer(String myAccount, String targetAccount, Long cash){
         validateAccount(myAccount);
-        validateAccount(otherAccount);
+        validateAccount(targetAccount);
         Long balance = accountRepository.findbyAccountNumber(myAccount).withdraw(cash);
-        accountRepository.findbyAccountNumber(otherAccount).deposit(cash);
+        accountRepository.findbyAccountNumber(targetAccount).deposit(cash);
+
+        LocalDateTime createdAt = LocalDateTime.now();
+        Long id1 = transactionRepository.nextId();
+        Transaction transaction1 = new Transaction(id1,myAccount,targetAccount,createdAt,cash, TransactionType.TRANSFER_OUT);
+        Long id2 = transactionRepository.nextId();
+        Transaction transaction2 = new Transaction(id2,targetAccount,myAccount,createdAt,cash, TransactionType.TRANSFER_IN);
+        transactionRepository.save(transaction1);
+        transactionRepository.save(transaction2);
+
         return balance;
     }
 
